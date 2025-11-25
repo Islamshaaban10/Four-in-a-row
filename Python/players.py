@@ -84,6 +84,11 @@ class MinMaxPlayer(PlayerController):
         # HINT: use the functions on the 'heuristic' object to produce evaluations for the different board states!
         
         # Example:
+        if self.player_id ==1:
+            next_Player =2
+        else:
+            next_Player =1
+
         max_value: float = -np.inf # negative infinity
         min_value: float = np.inf
         max_move: int = 0
@@ -97,7 +102,7 @@ class MinMaxPlayer(PlayerController):
                 #print("winner :",winner)
 
                 #value: int = self.heuristic.evaluate_board(self.player_id, new_board)
-                value : int = self.minimax(new_board,depth=self.depth-1)
+                value : int = self.minimax(new_board,next_Player,depth=self.depth-1)
                 print("value", value)
                 #best_action= self.heuristic.get_best_action(self.player_id, new_board) # Very useful helper function!
                 #print("best_action",best_action)
@@ -114,7 +119,7 @@ class MinMaxPlayer(PlayerController):
         return max_move
  
     
-    def minimax(self,board: Board,depth:int)-> int:
+    def minimax(self,board: Board,NextPlayer: int,depth:int)-> int:
         state = board.get_board_state()
        # iswinner =  self.heuristic.winning(state,self.game_n)
         
