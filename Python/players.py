@@ -82,32 +82,36 @@ class MinMaxPlayer(PlayerController):
         # TODO: implement minmax algortihm!
         # INT: use the functions on the 'board' object to produce a new board given a specific move
         # HINT: use the functions on the 'heuristic' object to produce evaluations for the different board states!
-        
-        # Example:
+
         if self.player_id ==1:
-            next_Player =2
+            opponent_id =2
         else:
-            next_Player =1
+            opponent_id =1
 
         max_value: float = -np.inf # negative infinity
         min_value: float = np.inf
-        max_move: int = 0
-        for col in range(board.width):
-            if board.is_valid(col):
-                new_board: Board = board.get_new_board(col, self.player_id)
-                #print("newboard :",new_board)
-                #state = new_board.get_board_state()
-                #print("state :",state)
-                #winner =  self.heuristic.winning(state,self.game_n)
-                #print("winner :",winner)
+        best_value = -np.inf
+        best_move = 0
 
-                #value: int = self.heuristic.evaluate_board(self.player_id, new_board)
-                value : int = self.minimax(new_board,next_Player,depth=self.depth-1)
-                print("value", value)
-                #best_action= self.heuristic.get_best_action(self.player_id, new_board) # Very useful helper function!
-                #print("best_action",best_action)
-            if value > max_value:
-                max_move = value
+        for col in range(board.width):
+            if not board.is_valid(col):
+                continue
+
+            new_board: Board = board.get_new_board(col, self.player_id)
+            #print("newboard :",new_board)
+            #state = new_board.get_board_state()
+            #print("state :",state)
+            #winner =  self.heuristic.winning(state,self.game_n)
+            #print("winner :",winner)
+
+            #value: int = self.heuristic.evaluate_board(self.player_id, new_board)
+            value : int = self.minimax(new_board, opponent_id, self.depth-1)
+            print("value", value)
+            #best_action= self.heuristic.get_best_action(self.player_id, new_board) # Very useful helper function!
+            #print("best_action",best_action)
+            if value > best_value:
+                best_value = value
+                best_move = col
 
         # This returns the same as
         best_action= self.heuristic.get_best_action(self.player_id, new_board) # Very useful helper function!
@@ -115,30 +119,44 @@ class MinMaxPlayer(PlayerController):
         # This is obviously not enough (this is depth 1)
         # Your assignment is to create a data structure (tree) to store the gameboards such that you can evaluate a higher depths.
         # Then, use the minmax algorithm to search through this tree to find the best move/action to take!
-        print("returnd max_move", max_move)
-        return max_move
+        print("returnd best_move", best_move)
+        return best_move
  
     
-    def minimax(self,board: Board,NextPlayer: int,depth:int)-> int:
+    def minimax(self,board: Board, player_to_move: int,depth:int)-> int:
         state = board.get_board_state()
-       # iswinner =  self.heuristic.winning(state,self.game_n)
+        result =  self.heuristic.winning(state,self.game_n)  # 1,2, -1 or 0 if still no winner 
         
-        if depth == 0 :
+        if depth == 0  or result !=0   :
             return self.heuristic.evaluate_board(self.player_id, board)
         
-        max_value: float = -np.inf # negative infinity
+        if player_to_move ==1:
+            Nextplayer =2
+        else:
+            Nextplayer =1
+        
+        # If it's our turn → maximize
+        if player_to_move == self.player_id:
+            best_value = -np.inf
+        else:                              
+           # Opponent's turn → minimize
+            best_value = np.inf
+
         for col in range (board.width):
-            if board.is_valid(col):
-                new_board :  Board = board.get_new_board(col,self.player_id)
-                value =self.minimax(new_board,depth=depth-1)
-               
-            if value > max_value:
-                max_move =value 
+            if not board.is_valid(col):
+                continue
+            new_board :  Board = board.get_new_board(col,player_to_move)
+            value =self.minimax(new_board,Nextplayer,depth-1) 
+             # Maximizing if it's our turn
+            if player_to_move == self.player_id:
+                if value > best_value:
+                    best_value = value
+            else:
+                if value < best_value:
+                    best_value = value
 
-        print("max_move", max_move)
-        return max_move
-
-
+        print("max_move", best_value)
+        return best_value
 
 class AlphaBetaPlayer(PlayerController):
     """Class for the minmax player using the minmax algorithm with alpha-beta pruning
