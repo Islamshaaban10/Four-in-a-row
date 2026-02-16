@@ -50,7 +50,6 @@ class Board:
         else:
             raise TypeError('Board constructor has received a wrong type as parameter')
 
-    
     def get_value(self, col: int, row: int) -> int:
         """Retrieves the value of a field in the board
 
@@ -63,15 +62,13 @@ class Board:
         """
         return self.board_state[col, row]
 
-
     def get_board_state(self) -> np.ndarray:
         """
         Returns:
             np.ndarray: copy of the board state
         """
         return self.board_state.copy()
-    
-    
+
     def play(self, col: int, player_id: int) -> bool:
         """Let player playerId make a move in column 'col'
 
@@ -87,7 +84,6 @@ class Board:
                 self.board_state[col, self.height - i - 1] = player_id
                 return True
         return False
-    
 
     def is_valid(self, col: int) -> bool:
         """Returns if a move is valid
@@ -99,7 +95,6 @@ class Board:
             bool: true if spot is not taken yet
         """
         return self.board_state[col, 0] == 0
-    
 
     def get_new_board(self, col: int, player_id: int) -> 'Board':
         """Gets a new board given a player and their action
@@ -118,7 +113,6 @@ class Board:
                 return Board(state)
             
         return Board(state)
-    
 
     def __str__(self) -> str:
         """

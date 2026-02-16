@@ -18,7 +18,6 @@ class Heuristic:
         self.game_n: int = game_n
         self.eval_count: int = 0
 
-
     def get_best_action(self, player_id: int, board: Board) -> int:
         """Determines the best column for the next move
 
@@ -38,7 +37,6 @@ class Heuristic:
                 utils[i] = self.evaluate_board(player_id, board.get_new_board(i, player_id))
 
         return np.argmax(utils)
-    
 
     def evaluate_board(self, player_id: int, board: Board) -> int:
         """Helper function to assign a utility to a board
@@ -53,7 +51,6 @@ class Heuristic:
         self.eval_count += 1
         state: np.ndarray = board.get_board_state()
         return self._evaluate(player_id, state, self.winning(state, self.game_n))
-    
 
     @staticmethod
     def winning(state: np.ndarray, game_n: int) -> int:
@@ -68,7 +65,6 @@ class Heuristic:
         """
         from app import winning as app_winning # imported here to avoid circular imports
         return app_winning(state, game_n)
-    
 
     def __str__(self) -> str:
         """ 
@@ -76,7 +72,6 @@ class Heuristic:
             str: name of the heuristic
         """
         return self._name()
-
 
     @abstractmethod
     def _name(self) -> str:
@@ -86,7 +81,6 @@ class Heuristic:
             str: name of the heuristic
         """
         pass
-
 
     @abstractmethod
     def _evaluate(self, player_id: int, state: np.ndarray, winner: int) -> int:
@@ -114,15 +108,13 @@ class SimpleHeuristic(Heuristic):
         """
         super().__init__(game_n)
 
-
     def _name(self) -> str:
         """
         Returns:
             str: the name of the heuristic; Simple
         """
         return 'Simple'
-    
-    
+
     @staticmethod
     @jit(nopython=True, cache=True)
     def _evaluate(player_id: int, state: np.ndarray, winner: int) -> int:
