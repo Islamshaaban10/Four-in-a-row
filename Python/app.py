@@ -3,6 +3,7 @@ from players import PlayerController, HumanPlayer, MinMaxPlayer, AlphaBetaPlayer
 from board import Board
 from typing import List
 import numpy as np
+import time
 from numba import jit
 
 
@@ -17,6 +18,8 @@ def start_game(game_n: int, board: Board, players: List[PlayerController]) -> in
     Returns:
         int: id of the winning player, or -1 if the game ends in a draw
     """
+    start_process_time = time.process_time()    # get the start time of the process time
+
     print('Start game!')
     current_player_index: int = 0 # index of the current player in the players list
     winner: int = 0
@@ -42,6 +45,12 @@ def start_game(game_n: int, board: Board, players: List[PlayerController]) -> in
 
     for p in players:
         print(f'Player {p} evaluated a boardstate {p.get_eval_count()} times!')
+
+    end_process_time = time.process_time()      # get the end of the process time
+    total_process_time = end_process_time - start_process_time      # calculate the total process time
+
+    # printing the timestamps and the process time
+    print(f'start process time: {start_process_time:.2f}, end process time: {end_process_time:.2f}, total process time: {total_process_time:.2f}seconds')
 
     return winner
 
@@ -140,8 +149,8 @@ def get_players(game_n: int) -> List[PlayerController]:
     heuristic2: Heuristic = SimpleHeuristic(game_n)
 
     human1: PlayerController = HumanPlayer(1, game_n, heuristic1)
-    #minMax: PlayerController = MinMaxPlayer(2, game_n, 5, heuristic2)
-    ab_player: PlayerController = AlphaBetaPlayer(2, game_n, 5, heuristic2)
+    minMax_player: PlayerController = MinMaxPlayer(2, game_n, 7, heuristic2)
+    ab_player: PlayerController = AlphaBetaPlayer(2, game_n, 7, heuristic2)
 
     players: List[PlayerController] = [human1, ab_player]
 

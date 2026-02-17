@@ -75,7 +75,7 @@ class MinMaxPlayer(PlayerController):
             int: column to play in
         """
 
-        if self.player_id == 1:     # initialize the best value to minus infinity
+        if self.player_id == 1:   # make the players play turn by turn
             opponent_id = 2
         else:
             opponent_id = 1
@@ -87,26 +87,22 @@ class MinMaxPlayer(PlayerController):
             if not board.is_valid(col):     # check whether the board is legal
                 continue
 
-            new_board: Board = board.get_new_board(col, self.player_id)
-            value: int = self.minimax(new_board, opponent_id, self.depth-1)
+            new_board: Board = board.get_new_board(col, self.player_id)     # get the new board
+            value: int = self.minMax(new_board, opponent_id, self.depth-1)      # call minmax for the new board
 
             if value > best_value:
                 best_value = value
                 best_move = col
-
-        #best_action = self.heuristic.get_best_action(self.player_id, new_board)
-        #print("best_action", best_action)
-        print("returned best_move", best_move)
         return best_move
 
-    def minimax(self, board: Board, player_to_move: int, depth: int) -> int:
-        state = board.get_board_state()
+    def minMax(self, board: Board, player_to_move: int, depth: int) -> int:
+        state = board.get_board_state()     # get the board state
         result = self.heuristic.winning(state, self.game_n)  # 1,2, -1 or 0 if still no winner
         
         if depth == 0 or result != 0:
             return self.heuristic.evaluate_board(self.player_id, board)
         
-        if player_to_move == 1:
+        if player_to_move == 1:     # make the players play turn by turn
             Nextplayer = 2
         else:
             Nextplayer = 1
@@ -116,20 +112,19 @@ class MinMaxPlayer(PlayerController):
         else:                 # Opponent's turn → minimize
             best_value = np.inf
 
-        for col in range(board.width):
+        for col in range(board.width):  # iterate over all the columns
             if not board.is_valid(col):     # check whether the board is legal
                 continue
             new_board:  Board = board.get_new_board(col, player_to_move)
-            value = self.minimax(new_board, Nextplayer, depth-1)
+            value = self.minMax(new_board, Nextplayer, depth-1)
 
             if player_to_move == self.player_id:
                 if value > best_value:              # Maximizing if it's our turn
-                    best_value = value
+                    best_value = value      # update if the new values is higher
             else:
                 if value < best_value:  # minimizing if it's the opponents turn
-                    best_value = value
+                    best_value = value      # update if the new value is lower
 
-        print("max_move", best_value)
         return best_value
 
 
@@ -177,7 +172,6 @@ class AlphaBetaPlayer(PlayerController):
                 best_value = value
                 best_move = col
 
-        print("Best_move is: ", best_move)
         return best_move
 
     def minimax_with_ab_pruning(self, board: Board, player_to_move: int, depth: int, a, b) -> int:
